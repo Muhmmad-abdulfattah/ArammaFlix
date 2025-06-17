@@ -1,0 +1,42 @@
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <i class="fas fa-film"></i>
+      <span>ArammaFlix</span>
+    </a>
+
+    <form class="d-flex search-form" (ngSubmit)="onSearch()">
+      <input class="form-control me-2 search-input" type="search" placeholder="Search for a movie..."
+        [(ngModel)]="searchQuery" name="searchQuery" (keydown.enter)="onSearch()">
+      <button class="btn btn-search" type="submit" title="Search">
+        <i class="fas fa-search"></i>
+      </button>
+    </form>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      title="Open Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <i class="fas fa-film"></i>
+            <span>Movies</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/wishlist" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <i class="fas fa-heart"></i>
+            <span>Wishlist</span>
+            <span class="wishlist-count" *ngIf="wishlistCount > 0">{{wishlistCount}}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
