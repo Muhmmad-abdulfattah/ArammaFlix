@@ -1,0 +1,53 @@
+
+:host {
+  display: block;
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.movie-details-container {
+  background-color: #2d2d2d;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+.img-fluid {
+  max-height: 500px;
+  object-fit: cover;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #dc3545;
+}
+
+p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}

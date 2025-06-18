@@ -1,19 +1,22 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MovieService } from '../../Services/movie-service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { WishListService } from '../../Services/wish-list-service';
+import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'app-movies',
-  imports: [CommonModule,RouterModule,MatPaginatorModule,MatSnackBarModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatPaginatorModule, MatSnackBarModule],
   templateUrl: './movies.html',
   styleUrl: './movies.css'
 })
-export class Movies {
-movies: any[] = [];
+export class Movies implements OnInit {
+  movies: any[] = [];
   error: string = '';
   loading: boolean = true;
   totalResults: number = 0;
@@ -21,44 +24,67 @@ movies: any[] = [];
   currentPage: number = 1;
   showToast: boolean = false;
   toastMessage: string = '';
+  searchQuery: string = '';
+  imagePath: string;
+
   constructor(
     private movieService: MovieService,
     private wishListService: WishListService,
     private snackBar: MatSnackBar,
-    private changeDetectorRef: ChangeDetectorRef
-  ) { }
-  ngOnInit(): void {
-    this.loadMovies();
-    console.log(this.movies);
+    private changeDetectorRef: ChangeDetectorRef,
+    private route: ActivatedRoute
+  ) {
+    this.imagePath = this.movieService.path;
   }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.searchQuery = params['search'] || '';
+      this.currentPage = 1;
+      this.loadMovies();
+    });
+    this.wishListService.getWishList().subscribe(() => {
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
   loadMovies(): void {
-    this.loading = true;
-    this.movieService.getMovies(this.currentPage, this.pageSize).subscribe({
+    this.toggleLoading(true);
+    let observable = this.searchQuery
+      ? this.movieService.searchMovies(this.searchQuery, this.currentPage)
+      : this.movieService.getMovies('en-US', this.currentPage, this.pageSize);
+    observable.pipe(retry(2)).subscribe({
       next: (response: any) => {
-        this.movies = response.results;
-        this.totalResults = response.total_results;
-        this.loading = false;
+        this.movies = response.results || [];
+        this.totalResults = response.total_results || 0;
+        this.toggleLoading(false);
         this.changeDetectorRef.detectChanges();
       },
-      error: (err: Error) => {
-        this.error = 'Error loading movies';
-        this.loading = false;
+      error: (err: any) => {
+        this.error = err.status === 401 ? 'Invalid API key' : 'Error loading movies';
+        this.toggleLoading(false);
+        this.snackBar.open(this.error, 'Close', { duration: 3000 });
         console.error('Error loading movies:', err);
       }
     });
+  }
+
+  toggleLoading(state?: boolean): void {
+    this.loading = state !== undefined ? state : !this.loading;
   }
 
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex + 1;
     this.pageSize = event.pageSize;
     this.loadMovies();
-   
   }
+
   addToWishList(movie: any): void {
     if (this.isInWishList(movie.id)) {
       this.wishListService.removeFromWishList(movie.id).subscribe({
         next: () => {
-            this.showCustomToast('Movie removed from wishlist');
+          this.showCustomToast('Movie removed from wishlist');
+          this.changeDetectorRef.detectChanges();
         },
         error: (err: Error) => {
           console.error('Error removing from wishlist:', err);
@@ -69,6 +95,7 @@ movies: any[] = [];
       this.wishListService.addToWishList(movie).subscribe({
         next: () => {
           this.showCustomToast('Movie added to wishlist');
+          this.changeDetectorRef.detectChanges();
         },
         error: (err: Error) => {
           console.error('Error adding to wishlist:', err);
@@ -87,7 +114,7 @@ movies: any[] = [];
     this.showToast = true;
     setTimeout(() => {
       this.showToast = false;
+      this.changeDetectorRef.detectChanges();
     }, 3000);
   }
-
 }
