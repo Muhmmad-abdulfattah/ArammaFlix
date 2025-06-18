@@ -1,7 +1,6 @@
-
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MovieService } from '../../Services/movie-service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -32,7 +31,8 @@ export class Movies implements OnInit {
     private wishListService: WishListService,
     private snackBar: MatSnackBar,
     private changeDetectorRef: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.imagePath = this.movieService.path;
   }
@@ -40,7 +40,8 @@ export class Movies implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['search'] || '';
-      this.currentPage = 1;
+      this.currentPage = params['page'] && !isNaN(+params['page']) ? +params['page'] : 1;
+      console.log('Movies loaded with params:', { search: this.searchQuery, page: this.currentPage });
       this.loadMovies();
     });
     this.wishListService.getWishList().subscribe(() => {
@@ -58,6 +59,11 @@ export class Movies implements OnInit {
         this.movies = response.results || [];
         this.totalResults = response.total_results || 0;
         this.toggleLoading(false);
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { search: this.searchQuery || null, page: this.currentPage > 1 ? this.currentPage : null },
+          queryParamsHandling: 'merge'
+        });
         this.changeDetectorRef.detectChanges();
       },
       error: (err: any) => {
@@ -71,11 +77,16 @@ export class Movies implements OnInit {
 
   toggleLoading(state?: boolean): void {
     this.loading = state !== undefined ? state : !this.loading;
+    this.changeDetectorRef.detectChanges();
   }
 
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex + 1;
-    this.pageSize = event.pageSize;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: this.currentPage > 1 ? this.currentPage : null },
+      queryParamsHandling: 'merge'
+    });
     this.loadMovies();
   }
 
@@ -112,9 +123,10 @@ export class Movies implements OnInit {
   showCustomToast(message: string): void {
     this.toastMessage = message;
     this.showToast = true;
+    // Rely on CSS animation for fade-out
     setTimeout(() => {
       this.showToast = false;
       this.changeDetectorRef.detectChanges();
-    }, 3000);
+    }, 2000); // Match CSS animation duration
   }
 }
