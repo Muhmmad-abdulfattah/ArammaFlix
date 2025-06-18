@@ -1,23 +1,25 @@
-
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../../Services/movie-service';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, RouterModule],
   templateUrl: './movie-details.html',
   styleUrl: './movie-details.css'
 })
 export class MovieDetails implements OnInit {
   movie: any = null;
+  recommendations: any[] = [];
   loading: boolean = true;
+  loadingRecommendations: boolean = false;
   error: string = '';
   imagePath: string;
-  returnQueryParams: { search?: string; page?: string } = {}; 
+  returnQueryParams: { search?: string; page?: string } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -30,12 +32,12 @@ export class MovieDetails implements OnInit {
   }
 
   ngOnInit(): void {
-  
     this.route.queryParams.subscribe(params => {
       this.returnQueryParams = {
         search: params['search'] || undefined,
         page: params['page'] || undefined
       };
+      console.log('Captured return query params:', this.returnQueryParams);
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -55,9 +57,9 @@ export class MovieDetails implements OnInit {
     this.toggleLoading(true);
     this.movieService.getMovieById(id).subscribe({
       next: (response: any) => {
-        console.log('API response:', response);
         this.movie = response;
         this.toggleLoading(false);
+        this.loadRecommendations(id);
         this.changeDetectorRef.detectChanges();
       },
       error: (err: any) => {
@@ -68,6 +70,24 @@ export class MovieDetails implements OnInit {
         this.toggleLoading(false);
         this.snackBar.open(this.error, 'Close', { duration: 3000 });
         this.router.navigate(['/']);
+        this.changeDetectorRef.detectChanges();
+      }
+    });
+  }
+
+  loadRecommendations(id: string): void {
+    console.log('Loading recommendations for movie ID:', id);
+    this.loadingRecommendations = true;
+    this.movieService.getRecommendations(id).subscribe({
+      next: (response: any) => {
+        this.recommendations = response.results.slice(0, 4) || [];
+        this.loadingRecommendations = false;
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Recommendations API error:', err);
+        this.recommendations = [];
+        this.loadingRecommendations = false;
         this.changeDetectorRef.detectChanges();
       }
     });
@@ -84,7 +104,13 @@ export class MovieDetails implements OnInit {
   }
 
   goBackToMovies(): void {
-    
-    this.router.navigate(['/'], { queryParams: this.returnQueryParams });
+    console.log('Attempting to navigate back to movies with params:', this.returnQueryParams);
+    if (window.history.length > 1) {
+      console.log('Using history.back()');
+      window.history.back();
+    } else {
+      console.log('Using router.navigate');
+      this.router.navigate(['/', { queryParams: this.returnQueryParams }]);
+    }
   }
 }
