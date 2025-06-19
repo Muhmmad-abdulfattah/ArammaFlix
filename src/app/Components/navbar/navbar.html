@@ -8,8 +8,8 @@
 
     <form class="d-flex search-form" (ngSubmit)="onSearch()">
       <input class="form-control me-2 search-input" type="search" placeholder="Search for a movie..."
-        [(ngModel)]="searchQuery" name="searchQuery" (keydown.enter)="onSearch()">
-      <button class="btn btn-search" type="submit" title="Search">
+        [(ngModel)]="searchQuery" name="searchQuery" >
+      <button class="btn btn-search" type="submit" title="Search" (click)="onSearch()">
         <i class="fas fa-search"></i>
       </button>
     </form>

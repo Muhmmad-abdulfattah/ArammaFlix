@@ -38,22 +38,19 @@ export class Movies implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.searchQuery = params['search'] || '';
-      this.currentPage = 1;
-      this.loadMovies();
-    });
-    this.wishListService.getWishList().subscribe(() => {
-      this.changeDetectorRef.detectChanges();
-    });
-  }
+  this.currentPage = 1;
+  this.loadMovies();
+
+  this.wishListService.getWishList().subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+  });
+}
 
   loadMovies(): void {
-    this.toggleLoading(true);
-    let observable = this.searchQuery
-      ? this.movieService.searchMovies(this.searchQuery, this.currentPage)
-      : this.movieService.getMovies('en-US', this.currentPage, this.pageSize);
-    observable.pipe(retry(2)).subscribe({
+  this.toggleLoading(true);
+  this.movieService.getMovies('en-US', this.currentPage, this.pageSize)
+    .pipe(retry(2))
+    .subscribe({
       next: (response: any) => {
         this.movies = response.results || [];
         this.totalResults = response.total_results || 0;
@@ -67,7 +64,7 @@ export class Movies implements OnInit {
         console.error('Error loading movies:', err);
       }
     });
-  }
+}
 
   toggleLoading(state?: boolean): void {
     this.loading = state !== undefined ? state : !this.loading;

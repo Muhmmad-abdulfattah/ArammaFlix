@@ -27,10 +27,10 @@ export class Navbar implements OnInit {
   }
 
   onSearch() {
-    if (this.searchQuery && this.searchQuery.trim() !== '') {
-      this.router.navigate(['/'], { queryParams: { search: this.searchQuery.trim() } });
-    } else {
-      this.router.navigate(['/']);
-    }
+  if (this.searchQuery && this.searchQuery.trim() !== '') {
+    this.router.navigate(['/search'], { queryParams: { query: this.searchQuery.trim() } });
+  } else {
+    this.router.navigate(['/']);
   }
+}
 }
