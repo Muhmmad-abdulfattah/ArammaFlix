@@ -6,13 +6,14 @@ import { MovieService } from '../../Services/movie-service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { WishListService } from '../../Services/wish-list-service';
 import { retry } from 'rxjs/operators';
+import { LanguageService } from '../../Services/language';
 
 @Component({
   selector: 'app-movies',
   standalone: true,
   imports: [CommonModule, RouterModule, MatPaginatorModule, MatSnackBarModule],
   templateUrl: './movies.html',
-  styleUrl: './movies.css'
+  styleUrl: './movies.css',
 })
 export class Movies implements OnInit {
   movies: any[] = [];
@@ -27,6 +28,7 @@ export class Movies implements OnInit {
   imagePath: string;
 
   constructor(
+    private languageService: LanguageService,
     private movieService: MovieService,
     private wishListService: WishListService,
     private snackBar: MatSnackBar,
@@ -38,10 +40,18 @@ export class Movies implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.languageService.movies$.subscribe((data) => {
+      this.movies = data;
+      this.changeDetectorRef.detectChanges();
+    });
+    this.route.queryParams.subscribe((params) => {
       this.searchQuery = params['search'] || '';
-      this.currentPage = params['page'] && !isNaN(+params['page']) ? +params['page'] : 1;
-      console.log('Movies loaded with params:', { search: this.searchQuery, page: this.currentPage });
+      this.currentPage =
+        params['page'] && !isNaN(+params['page']) ? +params['page'] : 1;
+      console.log('Movies loaded with params:', {
+        search: this.searchQuery,
+        page: this.currentPage,
+      });
       this.loadMovies();
     });
     this.wishListService.getWishList().subscribe(() => {
@@ -61,17 +71,21 @@ export class Movies implements OnInit {
         this.toggleLoading(false);
         this.router.navigate([], {
           relativeTo: this.route,
-          queryParams: { search: this.searchQuery || null, page: this.currentPage > 1 ? this.currentPage : null },
-          queryParamsHandling: 'merge'
+          queryParams: {
+            search: this.searchQuery || null,
+            page: this.currentPage > 1 ? this.currentPage : null,
+          },
+          queryParamsHandling: 'merge',
         });
         this.changeDetectorRef.detectChanges();
       },
       error: (err: any) => {
-        this.error = err.status === 401 ? 'Invalid API key' : 'Error loading movies';
+        this.error =
+          err.status === 401 ? 'Invalid API key' : 'Error loading movies';
         this.toggleLoading(false);
         this.snackBar.open(this.error, 'Close', { duration: 3000 });
         console.error('Error loading movies:', err);
-      }
+      },
     });
   }
 
@@ -85,7 +99,7 @@ export class Movies implements OnInit {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { page: this.currentPage > 1 ? this.currentPage : null },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
     this.loadMovies();
   }
@@ -100,7 +114,7 @@ export class Movies implements OnInit {
         error: (err: Error) => {
           console.error('Error removing from wishlist:', err);
           this.showCustomToast('Error removing from wishlist');
-        }
+        },
       });
     } else {
       this.wishListService.addToWishList(movie).subscribe({
@@ -111,7 +125,7 @@ export class Movies implements OnInit {
         error: (err: Error) => {
           console.error('Error adding to wishlist:', err);
           this.showCustomToast('Error adding to wishlist');
-        }
+        },
       });
     }
   }

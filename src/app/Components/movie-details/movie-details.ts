@@ -4,16 +4,19 @@ import { MovieService } from '../../Services/movie-service';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
+import { LanguageService } from '../../Services/language';
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
   imports: [CommonModule, MatSnackBarModule, RouterModule],
   templateUrl: './movie-details.html',
-  styleUrl: './movie-details.css'
+  styleUrl: './movie-details.css',
 })
 export class MovieDetails implements OnInit {
   movie: any = null;
+  movies: any[] = [];
+
   recommendations: any[] = [];
   loading: boolean = true;
   loadingRecommendations: boolean = false;
@@ -26,16 +29,21 @@ export class MovieDetails implements OnInit {
     private router: Router,
     private movieService: MovieService,
     private snackBar: MatSnackBar,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private languageService: LanguageService
   ) {
     this.imagePath = this.movieService.path;
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.languageService.movies$.subscribe((data) => {
+      this.movies = data;
+      this.changeDetectorRef.detectChanges();
+    });
+    this.route.queryParams.subscribe((params) => {
       this.returnQueryParams = {
         search: params['search'] || undefined,
-        page: params['page'] || undefined
+        page: params['page'] || undefined,
       };
       console.log('Captured return query params:', this.returnQueryParams);
     });
@@ -64,14 +72,17 @@ export class MovieDetails implements OnInit {
       },
       error: (err: any) => {
         console.error('API error:', err);
-        this.error = err.status === 401 ? 'Invalid API key' :
-                     err.status === 404 ? 'Movie not found' :
-                     'Error loading movie details';
+        this.error =
+          err.status === 401
+            ? 'Invalid API key'
+            : err.status === 404
+            ? 'Movie not found'
+            : 'Error loading movie details';
         this.toggleLoading(false);
         this.snackBar.open(this.error, 'Close', { duration: 3000 });
         this.router.navigate(['/']);
         this.changeDetectorRef.detectChanges();
-      }
+      },
     });
   }
 
@@ -89,7 +100,7 @@ export class MovieDetails implements OnInit {
         this.recommendations = [];
         this.loadingRecommendations = false;
         this.changeDetectorRef.detectChanges();
-      }
+      },
     });
   }
 
@@ -104,7 +115,10 @@ export class MovieDetails implements OnInit {
   }
 
   goBackToMovies(): void {
-    console.log('Attempting to navigate back to movies with params:', this.returnQueryParams);
+    console.log(
+      'Attempting to navigate back to movies with params:',
+      this.returnQueryParams
+    );
     if (window.history.length > 1) {
       console.log('Using history.back()');
       window.history.back();
