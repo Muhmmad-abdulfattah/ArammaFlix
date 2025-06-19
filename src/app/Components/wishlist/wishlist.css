@@ -1,0 +1,194 @@
+:host {
+  display: block;
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.container {
+  background-color: #1a1a1a;
+}
+
+/* Wishlist card style - same as movie-card */
+.movie-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: none;
+  background: #2d2d2d;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.card-img-top {
+  height: 400px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.movie-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.movie-card:hover .movie-overlay {
+  opacity: 1;
+}
+
+.movie-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rating {
+  font-size: 1.1rem;
+  background: rgba(255, 193, 7, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #ffc107;
+}
+
+.rating i {
+  margin-right: 5px;
+}
+
+.rating span {
+  font-weight: 600;
+}
+
+.release-date {
+  color: #fff;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.btn-wishlist {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.btn-wishlist:hover {
+  transform: scale(1.1);
+  background: rgba(220, 53, 69, 0.9);
+}
+
+.btn-wishlist i {
+  color: #fff;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.btn-wishlist i.active {
+  color: #dc3545;
+  transform: scale(1.2);
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 0;
+  color: #fff;
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+
+.card-body {
+  padding: 0;
+}
+
+.toast-message {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #dc3545;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: fadeInOut 2s;
+  text-align: center;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+}
+
+.text-center {
+  text-align: center;
+  margin-top: 40px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background-color: #c82333;
+}
+
+.btn-back i {
+  margin-right: 0.5rem;
+}
