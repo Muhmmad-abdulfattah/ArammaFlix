@@ -1,0 +1,56 @@
+<div *ngIf="showToast" class="toast-message toast-error">
+  {{ toastMessage }}
+</div>
+
+<div class="container mt-4">
+  <h3 *ngIf="query" class="text-white" >Results for "{{ query }}"</h3>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+<br>
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" *ngIf="movies.length > 0 && !loading">
+    <div class="col" *ngFor="let movie of movies">
+      <div class="card h-100 movie-card">
+        <div class="position-relative">
+          <img [src]="movie.poster_path ? imagePath + movie.poster_path : 'https://via.placeholder.com/400x600?text=No+Image'"
+               class="card-img-top" [alt]="movie.title" [title]="movie.title">
+
+          <button class="btn-wishlist" (click)="addToWishList(movie); $event.stopPropagation()" title="Add to wishlist">
+            <i class="fas fa-heart" [ngClass]="{'active': isInWishList(movie.id)}"></i>
+          </button>
+
+          <div class="movie-overlay">
+            <div class="movie-info">
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>{{ movie.vote_average }}</span>
+              </div>
+              <span class="release-date">{{ movie.release_date | date:'yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title text-truncate">{{ movie.title }}</h5>
+        </div>
+        <a [routerLink]="['/movie', movie.id]" class="stretched-link"></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="paginator-wrapper" *ngIf="totalResults > 0">
+    <mat-paginator
+      [length]="totalResults"
+      [pageSize]="pageSize"
+      [pageIndex]="currentPage - 1"
+      [pageSizeOptions]="[20]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
+</div>

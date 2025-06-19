@@ -1,0 +1,9 @@
+[33mc518ece[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: checkout: moving from recovered-work to main
+[33m56d702f[m[33m ([m[1;32mrecovered-work[m[33m)[m HEAD@{1}: checkout: moving from 56d702f76b800ae6ba6074cb3f22cb87c26bd902 to recovered-work
+[33m56d702f[m[33m ([m[1;32mrecovered-work[m[33m)[m HEAD@{2}: checkout: moving from main to 56d702f
+[33mc518ece[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: reset: moving to HEAD
+[33mc518ece[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{4}: pull: Fast-forward
+[33me07ae0f[m HEAD@{5}: rebase (finish): returning to refs/heads/main
+[33me07ae0f[m HEAD@{6}: rebase (start): checkout 56d702f76b800ae6ba6074cb3f22cb87c26bd902^
+[33m56d702f[m[33m ([m[1;32mrecovered-work[m[33m)[m HEAD@{7}: commit: شرح بسيط للتعديلات اللي عملتها
+[33me07ae0f[m HEAD@{8}: clone: from https://github.com/Muhmmad-abdulfattah/ArammaFlix

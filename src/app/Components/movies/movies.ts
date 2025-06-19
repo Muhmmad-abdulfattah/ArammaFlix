@@ -61,32 +61,32 @@ export class Movies implements OnInit {
 
   loadMovies(): void {
     this.toggleLoading(true);
-    let observable = this.searchQuery
-      ? this.movieService.searchMovies(this.searchQuery, this.currentPage)
-      : this.movieService.getMovies('en-US', this.currentPage, this.pageSize);
-    observable.pipe(retry(2)).subscribe({
-      next: (response: any) => {
-        this.movies = response.results || [];
-        this.totalResults = response.total_results || 0;
-        this.toggleLoading(false);
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {
-            search: this.searchQuery || null,
-            page: this.currentPage > 1 ? this.currentPage : null,
-          },
-          queryParamsHandling: 'merge',
-        });
-        this.changeDetectorRef.detectChanges();
-      },
-      error: (err: any) => {
-        this.error =
-          err.status === 401 ? 'Invalid API key' : 'Error loading movies';
-        this.toggleLoading(false);
-        this.snackBar.open(this.error, 'Close', { duration: 3000 });
-        console.error('Error loading movies:', err);
-      },
-    });
+    this.movieService
+      .getMovies('en-US', this.currentPage, this.pageSize)
+      .pipe(retry(2))
+      .subscribe({
+        next: (response: any) => {
+          this.movies = response.results || [];
+          this.totalResults = response.total_results || 0;
+          this.toggleLoading(false);
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+              search: this.searchQuery || null,
+              page: this.currentPage > 1 ? this.currentPage : null,
+            },
+            queryParamsHandling: 'merge',
+          });
+          this.changeDetectorRef.detectChanges();
+        },
+        error: (err: any) => {
+          this.error =
+            err.status === 401 ? 'Invalid API key' : 'Error loading movies';
+          this.toggleLoading(false);
+          this.snackBar.open(this.error, 'Close', { duration: 3000 });
+          console.error('Error loading movies:', err);
+        },
+      });
   }
 
   toggleLoading(state?: boolean): void {
