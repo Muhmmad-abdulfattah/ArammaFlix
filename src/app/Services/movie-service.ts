@@ -1,30 +1,48 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+// ArammaFlix/src/app/Services/movie-service.ts
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MovieService {
   private apiUrl = 'https://api.themoviedb.org/3';
-  private apiKey = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZmYxYjYwZmQzMzVkNDgwZmJiNGFjMWQxNDRkNDZkNyIsIm5iZiI6MTc0OTMxOTE1OS4xMzc5OTk4LCJzdWIiOiI2ODQ0N2RmNzI0NzljMjQwNzMyOTI2MmYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.Bnsh4lAljqguoGyx6f8sAD5J-MsZEBmRku5ITnMH2aU';
+  private apiKey: string = environment.apiKey;
+  public path = 'https://image.tmdb.org/t/p/w500';
 
-  private headers = new HttpHeaders({
-    'Authorization': `Bearer ${this.apiKey}`,
-    'accept': 'application/json'
-  });
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
-
-  getMovies(page: number = 1, pageSize: number = 20): Observable<any> {
-    return this.http.get(`${this.apiUrl}/movie/now_playing?page=${page}&language=en-US`, { headers: this.headers });
+  getMovies(
+    lang: string = 'en-US',
+    page: number = 1,
+    pageSize: number = 20
+  ): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/discover/movie?with_genres=16`, {
+      params: {
+        api_key: this.apiKey,
+        page: page.toString(),
+        language: lang,
+      },
+    });
   }
 
   searchMovies(query: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.apiUrl}/search/movie?query=${query}&page=${page}&language=en-US`, { headers: this.headers });
+    return this.http.get(
+      `${this.apiUrl}/search/movie?api_key=${this.apiKey}&query=${query}&page=${page}&language=en-US`
+    );
   }
 
   getMovieById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/movie/${id}?language=en-US`, { headers: this.headers });
+    return this.http.get(
+      `${this.apiUrl}/movie/${id}?api_key=${this.apiKey}&language=en-US`
+    );
+  }
+
+  getRecommendations(movieId: string, lang: string = 'en-US'): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/movie/${movieId}/recommendations?api_key=${this.apiKey}&language=${lang}`
+    );
   }
 }

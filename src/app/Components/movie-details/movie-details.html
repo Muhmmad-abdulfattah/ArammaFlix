@@ -1,0 +1,54 @@
+<div class="container mt-4 movie-details-container">
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+  <div *ngIf="movie && !loading" class="row">
+    <div class="col-md-4">
+      <img
+        [src]="movie.poster_path ? imagePath + movie.poster_path : 'https://via.placeholder.com/400x600?text=No+Image'"
+        class="img-fluid rounded" [alt]="movie.title" [title]="movie.title">
+    </div>
+    <div class="col-md-8">
+      <h1>{{ movie.title }}</h1>
+      <p><strong>Release Date:</strong> {{ movie.release_date | date:'mediumDate' }}</p>
+      <p><strong>Rating:</strong> {{ movie.vote_average }} / 10 ({{ movie.vote_count }} votes)</p>
+      <p><strong>Genres:</strong> {{ getGenres() }}</p>
+      <p><strong>Overview:</strong> {{ movie.overview }}</p>
+      <p><strong>Runtime:</strong> {{ movie.runtime }} minutes</p>
+      <p><strong>Budget:</strong> ${{ movie.budget | number }}</p>
+      <p><strong>Revenue:</strong> ${{ movie.revenue | number }}</p>
+      <a [href]="movie.homepage" *ngIf="movie.homepage" target="_blank" class="btn btn-primary">Visit Homepage</a>
+      <div class="mt-3">
+        <button (click)="goBackToMovies()" class="btn btn-secondary">Back to Movies</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && recommendations.length > 0" class="mt-5">
+    <h2>Recommended Movies</h2>
+    <div *ngIf="loadingRecommendations" class="text-center">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading recommendations...</span>
+      </div>
+    </div>
+    <div class="row" *ngIf="!loadingRecommendations">
+      <div class="col-md-3 mb-4" *ngFor="let rec of recommendations">
+        <div class="card h-100 position-relative">
+          <img
+            [src]="rec.poster_path ? imagePath + rec.poster_path : 'https://via.placeholder.com/400x600?text=No+Image'"
+            class="card-img-top" [alt]="rec.title" [title]="rec.title">
+          <div class="card-body">
+            <h5 class="card-title">{{ rec.title }}</h5>
+            <p class="card-text">Rating: {{ rec.vote_average }}/10</p>
+          </div>
+          <a [routerLink]="['/movie', rec.id]" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
