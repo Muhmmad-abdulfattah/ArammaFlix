@@ -1,59 +1,98 @@
-# Task
+# ArammaFlix
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.1.
+A movie application built with Angular 20 and Server-Side Rendering (SSR).
 
-## Development server
+## Features
 
-To start a local development server, run:
+- Movie listing
+- Movie details
+- Movie search
+- Wishlist functionality
+- Arabic language support
+- Responsive design
 
+## System Requirements
+
+- Node.js 18 or later
+- npm or yarn
+
+## Local Installation and Setup
+
+1. Install dependencies:
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+2. Start the local development server:
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. Open your browser and navigate to `http://localhost:4200/`
+
+## Production Build
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+## Deploy to Netlify
 
-To build the project run:
+### Method 1: Automatic Deployment from GitHub
 
+1. Push your code to a GitHub repository
+2. Go to [Netlify](https://netlify.com)
+3. Choose "New site from Git"
+4. Select GitHub and choose your repository
+5. Use the following settings:
+   - Build command: `npm run build`
+   - Publish directory: `dist/Task/browser`
+6. Click "Deploy site"
+
+### Method 2: Manual Deployment
+
+1. Build the project:
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+2. Go to [Netlify](https://netlify.com)
+3. Drag and drop the `dist/Task/browser` folder to the deploy area
+4. Your site will be deployed automatically
 
-## Running unit tests
+## Project Structure
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```
+src/
+├── app/
+│   ├── Components/
+│   │   ├── movie-details/
+│   │   ├── movies/
+│   │   ├── navbar/
+│   │   ├── search/
+│   │   └── wishlist/
+│   └── Services/
+│       ├── movie-service.ts
+│       ├── wish-list-service.ts
+│       └── language.ts
 ```
 
-## Running end-to-end tests
+## Technologies Used
 
-For end-to-end (e2e) testing, run:
+- Angular 20
+- Angular Material
+- Bootstrap 5
+- Font Awesome
+- Lottie Animations
+- Server-Side Rendering (SSR)
 
-```bash
-ng e2e
-```
+## Contributing
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+1. Fork the project
+2. Create a new feature branch
+3. Make your changes
+4. Submit a Pull Request
 
-## Additional Resources
+## License
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is licensed under the MIT License.
