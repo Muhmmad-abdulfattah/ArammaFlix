@@ -3,7 +3,7 @@
   publish = "dist/Task/browser"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20.19"
   NPM_FLAGS = "--legacy-peer-deps"
   NPM_CONFIG_PRODUCTION = "false"
 
