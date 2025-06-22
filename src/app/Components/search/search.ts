@@ -2,15 +2,12 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MovieService } from '../../Services/movie-service';
 import { WishListService } from '../../Services/wish-list-service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { retry } from 'rxjs/operators';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-search',
-  imports: [CommonModule, RouterModule,MatPaginatorModule, MatSnackBarModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './search.html',
   styleUrl: './search.css'
 })
@@ -30,7 +27,6 @@ export class Search implements OnInit {
     private route: ActivatedRoute,
     private movieService: MovieService,
     private wishListService: WishListService,
-    private snackBar: MatSnackBar,
     private cdRef: ChangeDetectorRef
   ) {
     this.imagePath = this.movieService.path;
@@ -43,8 +39,10 @@ export class Search implements OnInit {
       if (this.query) this.searchMovies();
     });
   }
+
   searchMovies(): void {
     this.loading = true;
+    this.error = '';
     this.movieService.searchMovies(this.query, this.currentPage)
       .pipe(retry(2))
       .subscribe({
@@ -57,12 +55,13 @@ export class Search implements OnInit {
         error: err => {
           this.error = 'Failed to load search results';
           this.loading = false;
-          this.snackBar.open(this.error, 'Close', { duration: 3000 });
+          this.cdRef.detectChanges();
         }
       });
   }
-  onPageChange(event: any): void {
-    this.currentPage = event.pageIndex + 1;
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
     this.searchMovies();
   }
 
@@ -81,12 +80,29 @@ export class Search implements OnInit {
       });
     }
   }
-showCustomToast(msg: string): void {
+
+  showCustomToast(msg: string): void {
     this.toastMessage = msg;
     this.showToast = true;
     setTimeout(() => {
       this.showToast = false;
       this.cdRef.detectChanges();
     }, 3000);
+  }
+
+  getTotalPages(): number {
+    return Math.ceil(this.totalResults / this.pageSize);
+  }
+
+  getPageNumbers(): number[] {
+    const totalPages = this.getTotalPages();
+    const pages: number[] = [];
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(totalPages, this.currentPage + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 }

@@ -3,14 +3,14 @@
 </div>
 
 <div class="container mt-4">
-  <h3 *ngIf="query" class="text-white" >Results for "{{ query }}"</h3>
+  <h3 *ngIf="query" class="text-white">Results for "{{ query }}"</h3>
 
   <div *ngIf="loading" class="text-center">
     <div class="spinner-border text-danger" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
-<br>
+  <br>
   <div *ngIf="error" class="alert alert-danger text-center">
     {{ error }}
   </div>
@@ -19,8 +19,9 @@
     <div class="col" *ngFor="let movie of movies">
       <div class="card h-100 movie-card">
         <div class="position-relative">
-          <img [src]="movie.poster_path ? imagePath + movie.poster_path : 'https://via.placeholder.com/400x600?text=No+Image'"
-               class="card-img-top" [alt]="movie.title" [title]="movie.title">
+          <img
+            [src]="movie.poster_path ? imagePath + movie.poster_path : 'https://via.placeholder.com/400x600?text=No+Image'"
+            class="card-img-top" [alt]="movie.title" [title]="movie.title">
 
           <button class="btn-wishlist" (click)="addToWishList(movie); $event.stopPropagation()" title="Add to wishlist">
             <i class="fas fa-heart" [ngClass]="{'active': isInWishList(movie.id)}"></i>
@@ -44,13 +45,30 @@
     </div>
   </div>
 
-  <div class="paginator-wrapper" *ngIf="totalResults > 0">
-    <mat-paginator
-      [length]="totalResults"
-      [pageSize]="pageSize"
-      [pageIndex]="currentPage - 1"
-      [pageSizeOptions]="[20]"
-      (page)="onPageChange($event)">
-    </mat-paginator>
+  <!-- Custom Pagination -->
+  <div class="pagination-wrapper text-center mt-4" *ngIf="totalResults > 0">
+    <nav aria-label="Search results pagination">
+      <ul class="pagination justify-content-center">
+        <!-- Previous button -->
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" href="#" (click)="onPageChange(currentPage - 1); $event.preventDefault()"
+            *ngIf="currentPage > 1">Previous</a>
+        </li>
+
+        <!-- Page numbers -->
+        <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+          <a class="page-link" href="#" (click)="onPageChange(page); $event.preventDefault()">{{ page }}</a>
+        </li>
+
+        <!-- Next button -->
+        <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+          <a class="page-link" href="#" (click)="onPageChange(currentPage + 1); $event.preventDefault()"
+            *ngIf="currentPage < getTotalPages()">Next</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="text-white mt-2">
+      Page {{ currentPage }} of {{ getTotalPages() }} ({{ totalResults }} total results)
+    </div>
   </div>
 </div>
